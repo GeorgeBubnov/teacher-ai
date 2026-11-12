@@ -1,0 +1,46 @@
+services:
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - parser-data:/data
+    environment:
+      STORAGE_DIR: /data
+      AI_API_KEY: ${AI_API_KEY:?Set AI_API_KEY before starting the stack}
+      AI_BASE_URL: https://ru.cheapvibecode.ru/v1
+      AI_MODEL: gemini-3.8-flash
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  lesson-api:
+    build: ./lesson_material
+    ports:
+      - "8100:8100"
+    volumes:
+      - lesson-material-data:/data
+    environment:
+      STORAGE_DIR: /data
+      AI_API_KEY: ${AI_API_KEY:?Set AI_API_KEY before starting the stack}
+      AI_BASE_URL: https://ru.cheapvibecode.ru/v1
+      AI_MODEL: gemini-3.8-flash
+    restart: unless-stopped
+
+  lesson-web:
+    build: ./lesson_material/web
+    ports:
+      - "5174:5174"
+    depends_on:
+      - lesson-api
+    restart: unless-stopped
+
+volumes:
+  parser-data:
+  lesson-material-data:

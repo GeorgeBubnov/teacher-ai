@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8100:8100"
+    volumes:
+      - lesson-material-data:/data
+    env_file:
+      - ../.env
+    environment:
+      AI_BASE_URL: https://ru.cheapvibecode.ru/v1
+      AI_MODEL: gemini-3.8-flash
+      STORAGE_DIR: /data
+
+  web:
+    build: ./web
+    ports:
+      - "5174:5174"
+    depends_on:
+      - api
+
+volumes:
+  lesson-material-data:
